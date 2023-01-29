@@ -109,7 +109,7 @@ public class BotApp {
         message = message.replaceAll("[^\\d.]", "");
         try {
             temperature = Double.parseDouble(message);
-            if(!(temperature <= 1.0) || !(temperature > 0)) {
+            if(!(temperature <= 2.0) || !(temperature > 0)) {
                 temperature = 0.7;
             }
         } catch(Exception e) {

@@ -26,27 +26,17 @@ public class Config {
     private final char commandCharacter;
 
     private Config() {
-        /* load style properties file */
-        FileInputStream input = null;
         try {
-
+            Properties config = new Properties();
             String dir = new File(BotApp.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile().getPath();
-            input = new FileInputStream(programConfigurationPath);
-        } catch (FileNotFoundException | URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-
-        Properties config = new Properties();
-
-        try {
-            config.load(input);
+            config.load(new FileInputStream(dir + "/config.properties"));
             botToken = config.getProperty("botToken");
             gptToken = config.getProperty("gptToken");
             commandCharacter = config.getProperty("commandCharacter").charAt(0);
             openAiMaxTokens = Integer.parseInt(config.getProperty("openAiMaxTokens"));
             openAiModel = config.getProperty("openAiModel");
             openAiTemperature = Double.parseDouble(config.getProperty("openAiTemperature"));
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
         }
     }
