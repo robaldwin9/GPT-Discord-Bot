@@ -3,7 +3,7 @@ Discord bot enabling you to chat with openAI gpt-3 In Discord
 
 ## Setup
 
-1. Edit `config.properties`, and add both your discord toke, and your open AI token
+1. Edit `config.properties`, and add both your discord token, and your open AI token
    ```
    botToken=ENTER_DISCORD_TOKEN
    gptToken=ENTER_GPT_TOKEN
