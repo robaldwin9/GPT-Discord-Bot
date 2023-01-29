@@ -12,9 +12,13 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 
 public class BotApp {
-
+    // Log4j logging
     private static final Logger logger = LogManager.getLogger(BotApp.class);
+
+    // Application configuration from properties file
     private static Config config;
+
+    // Helper class that utilizes openai-java
     private static OpenAiHelper aiHelper;
 
     public static void main(String[] args) {
@@ -41,6 +45,7 @@ public class BotApp {
                 Message message = event.getMessage();
                 logger.debug("Discord message content: {}", message.getContent());
 
+                // Verify valid command character used, and take action based on valid commands
                 if (message.getContent().charAt(0) == config.getCommandCharacter()
                         || message.getContent().charAt(0) == '/') {
                     String query = parseQuery(message.getContent());
@@ -62,7 +67,7 @@ public class BotApp {
                             final String modelResult = "Model was set to " + config.getOpenAiModel();
                             return message.getChannel().flatMap(channel -> channel.createMessage(modelResult));
                         case "gptConfig":
-                            final String configResult= "Current Configuration:\n" + config.openAiConfigToString();
+                            final String configResult= "Current Configuration:\n" + config;
                             return message.getChannel().flatMap(channel -> channel.createMessage(configResult));
                         case "gptHelp":
                             return message.getChannel().flatMap(channel ->
@@ -80,6 +85,11 @@ public class BotApp {
         login.block();
     }
 
+    /**
+     * Get help text for discord bot
+     *
+     * @return bot help text with command list
+     */
     public static String getHelpText() {
         String text = "GPT Bot interfaces with openAi gpt-3, to deliver interesting chats with a powerful AI.\n\n";
         text += "both `!` and `/` characters can be used to issue commands to the bot.\n";
@@ -91,6 +101,12 @@ public class BotApp {
         return text;
     }
 
+    /**
+     * Return valid openAi Model from user message
+     *
+     * @param message discord channel message
+     * @return openAi model from channel message
+     */
     public static String parseModelValue(String message) {
         String modelConfig = config.getOpenAiModel();
         for(OpenAiHelper.OpenAiModels value: new ArrayList<OpenAiHelper.OpenAiModels>
@@ -104,6 +120,12 @@ public class BotApp {
         return modelConfig;
     }
 
+    /**
+     * Get valid temperature value from user message
+     *
+     * @param message discord channel message
+     * @return openAi temperature value
+     */
     public static double parseRandomnessValue(String message) {
         double temperature;
         message = message.replaceAll("[^\\d.]", "");
@@ -118,6 +140,11 @@ public class BotApp {
         return temperature;
     }
 
+    /**
+     * get command string from user message
+     * @param message discord channel message
+     * @return bot command from user message
+     */
     public static String parseCommand(String message) {
         StringBuilder command = new StringBuilder();
         for (int i = 1; i < message.length(); i++) {
@@ -131,6 +158,11 @@ public class BotApp {
         return command.toString();
     }
 
+    /**
+     * get user query
+     * @param message  discord channel message
+     * @return text occurring after command test
+     */
     public static String parseQuery(String message) {
         int queryStartIndex = 0;
         for (int i = 1; i < message.length(); i++) {

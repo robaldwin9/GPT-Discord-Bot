@@ -3,26 +3,27 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Properties;
 
 public class Config {
-    final static String programAbsolutePath = "";
+    // log4j logging
     private static final Logger logger = LogManager.getLogger(Config.class);
+
+    // Singleton
     private static Config instance;
 
+    // Discord bot token
     private final String botToken;
 
+    // OpenaAi token
     private final String gptToken;
 
+    // OpenAi Configuration for requests
     private String openAiModel;
-
     private final int openAiMaxTokens;
-
     private  double openAiTemperature;
-
     private final char commandCharacter;
 
     private Config() {
@@ -41,43 +42,82 @@ public class Config {
         }
     }
 
+    /**
+     *
+     * @return current OpenAi temperature being used for requests
+     */
     public double getOpenAiTemperature() {
         return openAiTemperature;
     }
 
+    /**
+     *
+     * @param temperature OpenAi temperature to be used
+     */
     public void setOpenAiTemperature(double temperature) {
         openAiTemperature = temperature;
     }
+
+    /**
+     *
+     * @param model OpenAi Model to be used
+     */
 
     public void setOpenAiModel(String model) {
         openAiModel = model;
     }
 
+    /**
+     *
+     * @return current OpenAi Model in use
+     */
     public String getOpenAiModel() {
         return openAiModel;
     }
 
+    /**
+     *
+     * @return Max tokens allowed for OpenAi Response
+     */
     public int getOpenAiMaxTokens() {
         return openAiMaxTokens;
     }
 
+    /**
+     *
+     * @return Discord Token
+     */
     public String getBotToken() {
         return botToken;
     }
 
+    /**
+     *
+     * @return OpenAi Token
+     */
     public String getGptToken() {
         return gptToken;
     }
 
+    /**
+     *
+     * @return Character to indicate bot command
+     */
     public char getCommandCharacter() {
         return commandCharacter;
     }
 
+
+    /**
+     *
+     * @return config instance
+     */
     public static Config getInstance() {
         return instance == null ? (instance = new Config()): instance;
     }
 
-    public String openAiConfigToString() {
+    @Override
+    public String toString() {
         String configuration = "";
         configuration += "\tRandomness:  " + getOpenAiTemperature() + "\n";
         configuration += "\tToken Limit: " + getOpenAiMaxTokens() + "\n";
