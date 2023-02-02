@@ -58,20 +58,20 @@ public class BotApp {
                             }
                             String finalResponse = response;
                             return message.getChannel().flatMap(channel -> channel.createMessage(finalResponse));
-                        case "gptRand":
+                        case "gptrand":
                             config.setOpenAiTemperature(parseRandomnessValue(query));
                             final String result = "Randomness was set to " + config.getOpenAiTemperature();
                             return message.getChannel().flatMap(channel -> channel.createMessage(result));
-                        case "gptModel":
+                        case "gptmodel":
                             config.setOpenAiModel(parseModelValue(query));
                             final String modelResult = "Model was set to " + config.getOpenAiModel();
                             return message.getChannel().flatMap(channel -> channel.createMessage(modelResult));
-                        case "gptConfig":
+                        case "gptconfig":
                             final String configResult= "Current Configuration:\n" + config;
                             return message.getChannel().flatMap(channel -> channel.createMessage(configResult));
-                        case "gptHelp":
+                        case "gpthelp":
                             return message.getChannel().flatMap(channel -> channel.createMessage(getHelpText()));
-                        case "gptImage":
+                        case "gptimage":
                             String imageResult = aiHelper.makeOpenAiImageRequest(query);
                             return message.getChannel().flatMap(channel -> channel.createMessage(imageResult));
                         default:
@@ -96,7 +96,7 @@ public class BotApp {
         String text = "GPT Bot interfaces with openAi gpt-3, to deliver interesting chats with a powerful AI.\n\n";
         text += "both `!` and `/` characters can be used to issue commands to the bot.\n";
         text += "\t`!gpt`       Send a message to gpt, and get a text based reply\n";
-        text += "\t`!gptImage`  Send a message to gpt, and get an image url as a response\n";
+        text += "\t`!gptImage`  Send a message to gpt, and get an image as a response\n";
         text += "\t`!gptRand`   Changes the randomness of the response 0.0-1.0\n";
         text += "\t`!gptModel`  Changes the openAi Model used\n";
         text += "\t`!gptConfig` Shows current GPT Bot configuration\n";
@@ -158,13 +158,13 @@ public class BotApp {
             }
         }
 
-        return command.toString();
+        return command.toString().toLowerCase();
     }
 
     /**
      * get user query
      * @param message  discord channel message
-     * @return text occurring after command test
+     * @return text occurring after command text
      */
     public static String parseQuery(String message) {
         int queryStartIndex = 0;

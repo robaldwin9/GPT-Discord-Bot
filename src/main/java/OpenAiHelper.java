@@ -26,8 +26,6 @@ public class OpenAiHelper {
         return instance == null ? (instance = new OpenAiHelper()) : instance;
     }
 
-    private static final String POLICY_VIOLATION_TEXT = "Sorry request does not comply with OpenAI's Content Policy";
-
     private OpenAiHelper() {
         service = new OpenAiService(config.getGptToken());
     }
@@ -38,50 +36,67 @@ public class OpenAiHelper {
      * @return openAi response
      */
     public String makeOpenAiCompletionRequest(String request) {
-        String response = POLICY_VIOLATION_TEXT;
+        String response = config.getNonComplianceBotReply();
 
         if(requestMatchesContentPolicy(request)) {
             var completionRequest = CompletionRequest.builder()
                     .prompt(request)
                     .model(config.getOpenAiModel())
-                    .echo(true)
+                    .echo(false)
                     .temperature(config.getOpenAiTemperature())
                     .maxTokens(config.getOpenAiMaxTokens())
                     .build();
 
-            CompletionResult completionResult = service.createCompletion(completionRequest);
-            response = completionResult.getChoices().get(0).getText().replaceFirst(request + "\n", "");
+                try {
+                    CompletionResult completionResult = service.createCompletion(completionRequest);
+                    response = completionResult.getChoices().get(0).getText()
+                            .replaceFirst(request + "\n", "");
+                } catch (Exception e) {
+                    response = config.getRequestFailureBotReply();
+                }
+
+
+                if (response.isBlank() || response.isEmpty()) {
+                    response = config.getRequestFailureBotReply();
+                }
         }
 
         return response;
     }
 
     public String makeOpenAiImageRequest(String request) {
-        String result = POLICY_VIOLATION_TEXT;
+        String response = config.getNonComplianceBotReply();
 
         if(requestMatchesContentPolicy(request)) {
             CreateImageRequest imageRequest = CreateImageRequest.builder()
                     .prompt(request)
-                    .size("1024x1024")
-                    .responseFormat("url")
+                    .size(config.getOpenAiImageSize())
+                    .responseFormat(config.getOpenAiImageResponseFormat())
                     .build();
-            ImageResult imageResult = service.createImage(imageRequest);
-            result = imageResult.getData().get(0).getUrl();
+
+                try {
+                    ImageResult imageResult = service.createImage(imageRequest);
+                    response = imageResult.getData().get(0).getUrl();
+                } catch(Exception e) {
+                    e.printStackTrace();
+                    response = config.getRequestFailureBotReply();
+                }
+
+                if(response.isBlank() || response.isEmpty()) {
+                    response = config.getRequestFailureBotReply();
+                }
+
         }
 
-        return result;
+        return response;
     }
 
     public boolean requestMatchesContentPolicy(String request) {
         boolean requestOk = true;
-        ModerationRequest moderationRequest = com.theokanning.openai.moderation.ModerationRequest.builder()
-                .input(request)
-                .build();
-
+        ModerationRequest moderationRequest = ModerationRequest.builder().input(request).build();
         ModerationResult result = service.createModeration(moderationRequest);
         for(Moderation moderation: result.getResults()) {
             if (moderation.flagged) {
-                logger.debug("moderation check flagged: {}", moderation.toString());
                 requestOk = false;
                 break;
             }

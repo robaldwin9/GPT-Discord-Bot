@@ -26,6 +26,14 @@ public class Config {
     private  double openAiTemperature;
     private final char commandCharacter;
 
+    private final String openAiImageSize;
+
+    private final String openAiImageResponseFormat;
+
+    private final String nonComplianceBotReply;
+
+    private final String requestFailureBotReply;
+
     private Config() {
         try {
             Properties config = new Properties();
@@ -37,9 +45,45 @@ public class Config {
             openAiMaxTokens = Integer.parseInt(config.getProperty("openAiMaxTokens"));
             openAiModel = config.getProperty("openAiModel");
             openAiTemperature = Double.parseDouble(config.getProperty("openAiTemperature"));
+            openAiImageSize = config.getProperty("openAiImageSize");
+            openAiImageResponseFormat = config.getProperty("openAiImageResponseFormat");
+            nonComplianceBotReply = config.getProperty("nonComplianceBotReply");
+            requestFailureBotReply = config.getProperty("requestFailureBotReply");
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     *
+     * @return discord bot reply, when a response could not be retrieved from openAI
+     */
+    public String getRequestFailureBotReply() {
+        return requestFailureBotReply;
+    }
+
+    /**
+     *
+     * @return discord bot reply, when prompt does not comply with OpenAi policy
+     */
+    public String getNonComplianceBotReply() {
+        return nonComplianceBotReply;
+    }
+
+    /**
+     *
+     * @return response format of openAi image request
+     */
+    public String getOpenAiImageResponseFormat() {
+        return openAiImageResponseFormat;
+    }
+
+    /**
+     *
+     * @return how large of an image will open AI generate
+     */
+    public String getOpenAiImageSize() {
+        return openAiImageSize;
     }
 
     /**
