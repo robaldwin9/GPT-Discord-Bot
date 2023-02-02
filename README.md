@@ -15,10 +15,14 @@ Discord bot enabling you to chat with openAI gpt-3 In Discord
        1. Read Messages/View channels
        2. Manage Messages
    - [openAI](https://openai.com/) site where you will create an account, and get your `gptToken`
-   
+
 2. Build the application with `mvn clean install`
 
 3. Copy `gptBot.jar`, `log4j2.xml`, and `config.properties` to the directory you wish to deploy the bot to, and run with `java -jar gptBot.jar`
+
+### Moderation
+
+Discord bot automatically runs a moderation request on all openAI prompts, to ensure this application does not violate OpenAi's content policy.
 
 ## Supported Commands
 
