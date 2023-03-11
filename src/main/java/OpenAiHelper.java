@@ -42,8 +42,6 @@ public class OpenAiHelper {
         if(systemMessage.getRole().equals(AiChatMessages.SYSTEM_ROLE)) {
             systemMessage.setContent(content);
         }
-    }
-    public static void clearChatHistory() {
         messages.emptyChat();
     }
 

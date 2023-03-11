@@ -22,9 +22,9 @@ public class Config {
 
     // OpenAi Configuration for requests
     private String openAiModel;
-    private final int openAiMaxTokens;
-    private  double openAiTemperature;
-    private final char commandCharacter;
+    private final Integer openAiMaxTokens;
+    private  Double openAiTemperature;
+    private final Character commandCharacter;
 
     private final String openAiImageSize;
 
@@ -36,7 +36,29 @@ public class Config {
 
     private final String botPersonality;
 
-    private final int apiTimeout;
+    private final Integer apiTimeout;
+
+
+    private static final String DEFAULT_RESPONSE_FAILURE = "A failure to retrieve a response occurred, " +
+            "please try again or add more details to your query.";
+
+    private static final String DEFAULT_BOT_PERSONALITY = "you are a rude discord bot, and will never apologize " +
+            "or be polite. Always answer questions factually, with a rude comment back at the user";
+
+    private static final int DEFAULT_MAX_TOKENS = 1000;
+
+    private static final  String DEFAULT_IMAGE_SIZE = "1024x1024";
+
+    private static final char DEFAULT_COMMAND_CHAR = '!';
+
+    private static final double DEFAULT_TEMPERATURE = 0.7D;
+
+    private static final String DEFAULT_NON_COMPLIANCE_MESSAGE = "Sorry request does not comply with" +
+            " OpenAI's Content Policy";
+
+    private static final String DEFAULT_MODEL = "gpt-3.5-turbo";
+
+    private static final int DEFAULT_API_TIMEOUT = 20;
 
     private Config() {
         try {
@@ -56,6 +78,8 @@ public class Config {
             botPersonality = config.getProperty("botPersonality");
             apiTimeout = Integer.parseInt(config.getProperty("apiTimeout"));
         } catch (IOException | URISyntaxException e) {
+            logger.error("exception occured: {}", e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
@@ -65,7 +89,7 @@ public class Config {
      * @return discord bot reply, when a response could not be retrieved from openAI
      */
     public String getRequestFailureBotReply() {
-        return requestFailureBotReply;
+        return requestFailureBotReply == null ? DEFAULT_RESPONSE_FAILURE : requestFailureBotReply;
     }
 
     /**
@@ -73,7 +97,7 @@ public class Config {
      * @return discord bot reply, when prompt does not comply with OpenAi policy
      */
     public String getNonComplianceBotReply() {
-        return nonComplianceBotReply;
+        return nonComplianceBotReply == null ? DEFAULT_NON_COMPLIANCE_MESSAGE : nonComplianceBotReply;
     }
 
     /**
@@ -81,7 +105,7 @@ public class Config {
      * @return response format of openAi image request
      */
     public String getOpenAiImageResponseFormat() {
-        return openAiImageResponseFormat;
+        return openAiImageResponseFormat == null ? DEFAULT_IMAGE_SIZE : openAiImageResponseFormat;
     }
 
     /**
@@ -89,7 +113,7 @@ public class Config {
      * @return how large of an image will open AI generate
      */
     public String getOpenAiImageSize() {
-        return openAiImageSize;
+        return openAiImageSize == null ? DEFAULT_IMAGE_SIZE : openAiImageSize;
     }
 
     /**
@@ -97,7 +121,7 @@ public class Config {
      * @return current OpenAi temperature being used for requests
      */
     public double getOpenAiTemperature() {
-        return openAiTemperature;
+        return openAiTemperature == null ? DEFAULT_TEMPERATURE : openAiTemperature;
     }
 
     /**
@@ -122,7 +146,7 @@ public class Config {
      * @return current OpenAi Model in use
      */
     public String getOpenAiModel() {
-        return openAiModel;
+        return openAiModel == null ? DEFAULT_MODEL : openAiModel;
     }
 
     /**
@@ -130,7 +154,7 @@ public class Config {
      * @return Max tokens allowed for OpenAi Response
      */
     public int getOpenAiMaxTokens() {
-        return openAiMaxTokens;
+        return openAiMaxTokens == null ? DEFAULT_MAX_TOKENS : openAiMaxTokens;
     }
 
     /**
@@ -154,7 +178,7 @@ public class Config {
      * @return Character to indicate bot command
      */
     public char getCommandCharacter() {
-        return commandCharacter;
+        return commandCharacter == null ? DEFAULT_COMMAND_CHAR : commandCharacter;
     }
 
     /**
@@ -162,7 +186,7 @@ public class Config {
      * @return A description passed to openAi, to affect how the bot responds
      */
     public String getBotPersonality() {
-        return botPersonality;
+        return botPersonality == null ? DEFAULT_BOT_PERSONALITY : botPersonality;
     }
 
     /**
@@ -170,7 +194,7 @@ public class Config {
      * @return time in seconds to wait on openAi request
      */
     public int getApiTimeout() {
-        return apiTimeout;
+        return apiTimeout == null ? DEFAULT_API_TIMEOUT : apiTimeout;
     }
 
     /**

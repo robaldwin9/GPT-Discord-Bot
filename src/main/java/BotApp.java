@@ -108,7 +108,7 @@ public class BotApp {
         text += "\t`!gptModel`  Changes the openAi Model used\n";
         text += "\t`!gptConfig` Shows current GPT Bot configuration\n";
         text += "\t`!gptHelp`   Generates list off commands\n";
-        text += "\t`!gptrole    define a role for the bot this will affect its personality";
+        text += "\t`!gptrole`   define a role for the bot this will affect its personality";
         return text;
     }
 
@@ -120,7 +120,7 @@ public class BotApp {
      */
     public static String parseModelValue(String message) {
         String modelConfig = config.getOpenAiModel();
-        for(OpenAiHelper.OpenAiModels value: new ArrayList<OpenAiHelper.OpenAiModels>
+        for(OpenAiHelper.OpenAiModels value: new ArrayList<>
                 (EnumSet.allOf(OpenAiHelper.OpenAiModels.class))) {
             if (message.contains(value.getId())) {
                 modelConfig = value.getId();
