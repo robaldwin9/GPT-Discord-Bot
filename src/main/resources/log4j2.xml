@@ -7,14 +7,13 @@
         </Console>
         <File name="FileAppender" fileName="logs/app/appLog-${date:yyyyMMdd}.log"  bufferedIO="true"  append="true">
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
-            <ThresholdFilter level="DATA" onMatch="DENY" onMismatch="ACCEPT"/>
         </File>
     </Appenders>
 
     <Loggers>
-        <Root level="trace">
-            <AppenderRef ref="ConsoleAppender" level="debug"/>
-            <AppenderRef ref="FileAppender" level="debug"/>
+        <Root level="WARN">
+            <AppenderRef name="ConsoleAppender" ref="Console"/>
+            <AppenderRef name="FileAppender" ref="RollingFile"/>
         </Root>
     </Loggers>
 </Configuration>

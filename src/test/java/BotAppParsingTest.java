@@ -34,7 +34,7 @@ public class BotAppParsingTest {
 
     @Test
     public void testParseModel() {
-        assertEquals("gpt-3.5-turbo", BotApp.parseQuery("!gptModel"));
+        assertEquals("gpt-3.5-turbo", BotApp.parseQuery("!gptModel gpt-3.5-turbo"));
         assertEquals("text-curie-001", BotApp.parseQuery("!gptModel text-curie-001"));
         assertEquals("text-babbage-001", BotApp.parseQuery("!gptModel text-babbage-001"));
         assertEquals("text-ada-001", BotApp.parseQuery("!gptModel text-ada-001"));
