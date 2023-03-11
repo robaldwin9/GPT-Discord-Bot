@@ -34,6 +34,10 @@ public class Config {
 
     private final String requestFailureBotReply;
 
+    private final String botPersonality;
+
+    private final int apiTimeout;
+
     private Config() {
         try {
             Properties config = new Properties();
@@ -49,6 +53,8 @@ public class Config {
             openAiImageResponseFormat = config.getProperty("openAiImageResponseFormat");
             nonComplianceBotReply = config.getProperty("nonComplianceBotReply");
             requestFailureBotReply = config.getProperty("requestFailureBotReply");
+            botPersonality = config.getProperty("botPersonality");
+            apiTimeout = Integer.parseInt(config.getProperty("apiTimeout"));
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -151,6 +157,21 @@ public class Config {
         return commandCharacter;
     }
 
+    /**
+     *
+     * @return A description passed to openAi, to affect how the bot responds
+     */
+    public String getBotPersonality() {
+        return botPersonality;
+    }
+
+    /**
+     *
+     * @return time in seconds to wait on openAi request
+     */
+    public int getApiTimeout() {
+        return apiTimeout;
+    }
 
     /**
      *

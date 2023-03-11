@@ -1,6 +1,9 @@
 import com.theokanning.openai.OpenAiService;
 import com.theokanning.openai.completion.CompletionRequest;
 import com.theokanning.openai.completion.CompletionResult;
+import com.theokanning.openai.completion.chat.ChatCompletionRequest;
+import com.theokanning.openai.completion.chat.ChatCompletionResult;
+import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.image.CreateImageRequest;
 import com.theokanning.openai.image.ImageResult;
 import com.theokanning.openai.moderation.Moderation;
@@ -22,14 +25,66 @@ public class OpenAiHelper {
     // OpenAi-java service API
     private static OpenAiService service;
 
+    // Holds chat history for ChatCompletionRequests
+    private static AiChatMessages messages;
+
     public static OpenAiHelper getInstance() {
         return instance == null ? (instance = new OpenAiHelper()) : instance;
     }
 
     private OpenAiHelper() {
-        service = new OpenAiService(config.getGptToken());
+        service = new OpenAiService(config.getGptToken(), config.getApiTimeout());
+        messages = new AiChatMessages(config.getOpenAiMaxTokens(), config.getBotPersonality());
     }
 
+    public static void updateRole(String content) {
+        ChatMessage systemMessage =  messages.get(0);
+        if(systemMessage.getRole().equals(AiChatMessages.SYSTEM_ROLE)) {
+            systemMessage.setContent(content);
+        }
+    }
+    public static void clearChatHistory() {
+        messages.emptyChat();
+    }
+
+    public String makeOpenAiChatCompletionRequest(String request) {
+        logger.debug("maxOpenAAiChatCompletionRequest({})", request);
+        String response = config.getNonComplianceBotReply();
+        logger.debug("got complience response: {}", response);
+
+        if(requestMatchesContentPolicy(request)) {
+            logger.debug("Create new chat message and add it to chat history");
+            messages.add(new ChatMessage("user", request));
+
+            logger.debug("creating openAi chat request");
+            var chatRequest = ChatCompletionRequest.builder()
+                    .messages(messages)
+                    .maxTokens(config.getOpenAiMaxTokens())
+                    .temperature(config.getOpenAiTemperature())
+                    .model(config.getOpenAiModel())
+                    .build();
+
+            try {
+                logger.debug("attempting to parse response");
+                ChatCompletionResult completionResult = service.createChatCompletion(chatRequest);
+                response = completionResult.getChoices().get(0).getMessage().getContent();
+                messages.add(completionResult.getChoices().get(0).getMessage());
+            } catch (Exception e) {
+                logger.error("exception occur when making chatCompletion");
+                response = config.getRequestFailureBotReply();
+                e.printStackTrace();
+            }
+
+
+            if (response.isBlank() || response.isEmpty()) {
+                logger.debug("respoonse was blank or empty");
+                response = config.getRequestFailureBotReply();
+            }
+        }
+
+        logger.debug("returning: {}", response);
+        return response;
+    }
     /**
      * OpenAi-java Completion request
      * @param request prompt for the AI
@@ -85,7 +140,6 @@ public class OpenAiHelper {
                 if(response.isBlank() || response.isEmpty()) {
                     response = config.getRequestFailureBotReply();
                 }
-
         }
 
         return response;
@@ -105,6 +159,11 @@ public class OpenAiHelper {
         return requestOk;
     }
 
+    @Override
+    public String toString() {
+        return messages.toString();
+    }
+
     /**
      * All possible models that can be used in a request
      */
@@ -114,7 +173,8 @@ public class OpenAiHelper {
         BABBAGE_1("text-babbage-001"),
         ADA_1("text-ada-001"),
         CODE_DAVINCI("conde-davinci-002"),
-        CODE_CUSHMAN("code-chsman-001");
+        CODE_CUSHMAN("code-chsman-001"),
+        GPT_3_5_TURBO("gpt-3.5-turbo");
 
         private final String id;
 
