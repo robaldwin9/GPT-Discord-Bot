@@ -1,3 +1,6 @@
+import bot.ai.AiChatMessages;
+import bot.ai.OpenAiHelper;
+import bot.config.Config;
 import org.junit.jupiter.api.BeforeEach;
 
 import static reactor.core.publisher.Mono.when;

@@ -1,4 +1,6 @@
+import bot.ai.AiChatMessages;
 import com.theokanning.openai.completion.chat.ChatMessage;
+import bot.config.Config;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
