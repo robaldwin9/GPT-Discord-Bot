@@ -1,5 +1,6 @@
 package bot.config;
 
+import bot.ai.OpenAiHelper;
 import discord4j.common.util.Snowflake;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,7 +29,7 @@ public class Config {
     private static final Map<Snowflake, ServerConfig> channelConfigs = new HashMap<>();
     private static final String DEFAULT_NON_COMPLIANCE_MESSAGE = "Sorry request does not comply with" +
             " OpenAI's Content Policy";
-    private static final String DEFAULT_MODEL = "gpt-3.5-turbo";
+    private static final String DEFAULT_MODEL = OpenAiHelper.OpenAiModels.GPT_4.getId();
     private static final int DEFAULT_API_TIMEOUT = 20;
 
 

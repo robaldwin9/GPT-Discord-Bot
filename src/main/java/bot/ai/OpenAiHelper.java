@@ -166,7 +166,8 @@ public class OpenAiHelper {
         ADA_1("text-ada-001"),
         CODE_DAVINCI("conde-davinci-002"),
         CODE_CUSHMAN("code-chsman-001"),
-        GPT_3_5_TURBO("gpt-3.5-turbo");
+        GPT_3_5_TURBO("gpt-3.5-turbo"),
+        GPT_4("gpt-4");
 
         private final String id;
 
