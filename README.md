@@ -1,5 +1,5 @@
-# GPT-3-Discord-Bot
-Discord bot enabling you to chat with openAI gpt-3 In Discord. Default model used is `gpt-3.5-turbo` which allows the bot to respond based on past chat history. Additionally it is possible to configure the bots personality either by command, or configuration.
+# GPT-4-Discord-Bot
+Discord bot enabling you to chat with openAI gpt-3 In Discord. Default model used is `gpt-4` which allows the bot to respond based on past chat history. Additionally it is possible to configure the bots personality either by command, or configuration.
 
 ## Setup
 
