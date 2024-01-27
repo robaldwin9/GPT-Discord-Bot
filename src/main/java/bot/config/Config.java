@@ -2,8 +2,6 @@ package bot.config;
 
 import bot.ai.OpenAiHelper;
 import discord4j.common.util.Snowflake;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import bot.BotApp;
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,17 +10,19 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Config {
     // log4j logging
-    private static final Logger logger = LogManager.getLogger(Config.class);
+    private static final Logger logger = LoggerFactory.getLogger(Config.class);
 
     // Defaults
     private static final String DEFAULT_RESPONSE_FAILURE = "A failure to retrieve a response occurred, " +
             "please try again or add more details to your query.";
     private static final String DEFAULT_BOT_PERSONALITY = "you are a rude discord bot, and will never apologize " +
             "or be polite. Always answer questions factually, with a rude comment back at the user";
-    private static final int DEFAULT_MAX_TOKENS = 1000;
+    private static final int DEFAULT_MAX_TOKENS = 1_000;
     private static final  String DEFAULT_IMAGE_SIZE = "1024x1024";
     private static final char DEFAULT_COMMAND_CHAR = '!';
     private static final double DEFAULT_TEMPERATURE = 0.7D;
@@ -196,7 +196,8 @@ public class Config {
         String configuration = "";
         configuration += "\tRandomness:  " + channelConfig.getOpenAiTemperature() + "\n";
         configuration += "\tToken Limit: " + channelConfig.getOpenAiMaxTokens() + "\n";
-        configuration += "\tAi Model:    " + channelConfig.getOpenAiModel() + "\n";
+        configuration += "\tAI Model:    " + channelConfig.getOpenAiModel() + "\n";
+        configuration += "\tAI Role: " + channelConfig.getBotPersonality() + "\n";
         return configuration;
     }
 }

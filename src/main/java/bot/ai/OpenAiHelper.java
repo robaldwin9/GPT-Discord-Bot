@@ -1,6 +1,5 @@
 package bot.ai;
 
-import com.theokanning.openai.OpenAiService;
 import com.theokanning.openai.completion.CompletionRequest;
 import com.theokanning.openai.completion.CompletionResult;
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
@@ -11,16 +10,19 @@ import com.theokanning.openai.image.ImageResult;
 import com.theokanning.openai.moderation.Moderation;
 import com.theokanning.openai.moderation.ModerationRequest;
 import com.theokanning.openai.moderation.ModerationResult;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.theokanning.openai.service.OpenAiService;
 import bot.config.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.time.Duration;
 
 public class OpenAiHelper {
     // Application configuration from properties file
     private final Config config = Config.getInstance();
 
     // Log4j logging
-    private static final Logger logger = LogManager.getLogger(OpenAiHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(OpenAiHelper.class);
 
     // Singleton
     private static OpenAiHelper instance;
@@ -33,7 +35,7 @@ public class OpenAiHelper {
     }
 
     private OpenAiHelper() {
-        service = new OpenAiService(config.getGptToken(), config.getApiTimeout());
+        service = new OpenAiService(config.getGptToken(), Duration.ofSeconds(Config.getInstance().getApiTimeout()));
     }
 
     public static void updateRole(String content, ServerConfig serverConfig) {
@@ -144,7 +146,10 @@ public class OpenAiHelper {
 
     public boolean requestMatchesContentPolicy(String request) {
         boolean requestOk = true;
-        ModerationRequest moderationRequest = ModerationRequest.builder().input(request).build();
+        ModerationRequest moderationRequest = ModerationRequest.builder()
+                .input(request)
+                .model(OpenAiModels.TEXT_MODERATION_STABLE.getId())
+                .build();
         ModerationResult result = service.createModeration(moderationRequest);
         for(Moderation moderation: result.getResults()) {
             if (moderation.flagged) {
@@ -156,18 +161,34 @@ public class OpenAiHelper {
         return requestOk;
     }
 
+    public static boolean isChatModel(String model) {
+        return model.equals(OpenAiModels.GPT_3_5_TURBO.getId())
+                || model.equals(OpenAiModels.GPT_4.getId())
+                || model.equals(OpenAiModels.GPT_4_TURBO.getId())
+                || model.equals(OpenAiModels.GPT_3_5_TURBO_1106.getId());
+    }
+
+    public static boolean isCompletionModel(String model) {
+        return model.equals(OpenAiModels.DAVINCI_2.getId())
+                || model.equals(OpenAiModels.BABBAGE_002.getId());
+    }
+
     /**
      * All possible models that can be used in a request
      */
     public enum OpenAiModels {
-        DAVINCI_3("text-davinci-003"),
-        CURIE_1("text-curie-001"),
-        BABBAGE_1("text-babbage-001"),
-        ADA_1("text-ada-001"),
-        CODE_DAVINCI("conde-davinci-002"),
-        CODE_CUSHMAN("code-chsman-001"),
+        DAVINCI_2("davinci-002"),
+        BABBAGE_002("babbage-002"),
+        TEXT_EMBEDDING_3_LARGE("text-embedding-3-large"),
+        TEXT_EMBEDDING_3_SMALL("text-embedding-3-small"),
+        TEXT_EMBEDDING_ADA_002("text-embedding-ada-002"),
+        TEXT_MODERATION_LATEST("text-moderation-latest"),
+        TEXT_MODERATION_STABLE("text-moderation-stable"),
+        TEXT_MODERATION_007("text-moderation-007"),
         GPT_3_5_TURBO("gpt-3.5-turbo"),
-        GPT_4("gpt-4");
+        GPT_3_5_TURBO_1106("gpt-3.5-turbo-1106"),
+        GPT_4("gpt-4"),
+        GPT_4_TURBO("gpt-4-turbo-preview"); // WARNING May Become Deprecated
 
         private final String id;
 
